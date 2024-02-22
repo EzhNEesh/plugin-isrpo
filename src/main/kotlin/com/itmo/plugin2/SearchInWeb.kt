@@ -1,6 +1,5 @@
 package com.itmo.plugin2
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
@@ -12,8 +11,12 @@ class SearchInWeb : AnAction() {
         val editor: Editor? = e.getData(PlatformDataKeys.EDITOR)
         val selectedText = editor!!.selectionModel.selectedText
 
-        var url = "https://www.youtube.com/results?search_query="
-        url += selectedText
-        BrowserUtil.open(url)
+        if (selectedText != null) {
+            val selectDialogWrapper = SelectDialogWrapper(e.project)
+            if (selectDialogWrapper.showAndGet()) {
+                val searchSource = SearchSource(selectDialogWrapper.resource!!, selectedText)
+                searchSource.openInWeb()
+            }
+        }
     }
 }
